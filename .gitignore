@@ -1,0 +1,28 @@
+# Node
+**/node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Hardhat / Foundry
+**/artifacts/
+**/cache/
+.env
+.env.*
+coverage/
+coverage.json
+
+# Next.js
+.next/
+out/
+.vercel/
+
+# OS / Editor
+.DS_Store
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# Build outputs
+build/
+dist/
