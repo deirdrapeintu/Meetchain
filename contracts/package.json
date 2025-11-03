@@ -1,0 +1,32 @@
+{
+  "name": "meetchain-contracts",
+  "version": "0.1.0",
+  "private": true,
+  "license": "MIT",
+  "scripts": {
+    "build": "hardhat compile",
+    "clean": "hardhat clean",
+    "test": "hardhat test",
+    "deploy:localhost": "hardhat deploy --network localhost",
+    "deploy:sepolia": "hardhat deploy --network sepolia",
+    "verify:sepolia": "hardhat etherscan-verify --network sepolia",
+    "create:sepolia": "node scripts/createEvent.mjs"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ethers": "^3.0.5",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@types/node": "^20.11.30",
+    "dotenv": "^16.4.5",
+    "ethers": "^6.12.0",
+    "hardhat": "^2.22.5",
+    "hardhat-deploy": "^0.12.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2",
+    "@fhevm/solidity": "^0.7.0",
+    "@zama-fhe/oracle-solidity": "^0.2.0"
+  }
+}
+
