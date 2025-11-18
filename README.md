@@ -40,9 +40,9 @@ npm run dev
 ## 测试网（Sepolia + relayer-sdk）
 
 1) 配置合约环境变量（你提供的数据）：
-- 钱包地址: 0xd3694b057dAbD2a7C59390d61575d2B7d103ddf0
-- PRIVATE_KEY: fdb0b3c5e223fd6a138bb0fc5e9c5182d4fc28274e31cdfa5bc6298a41190116
-- ETHERSCAN_API_KEY: QB3VMXRZRJ3WVAJ5ASH9823B9VHFBCVV3Y
+- WALLET_ADDRESS: <your_sepolia_wallet_address>
+- PRIVATE_KEY: <your_private_key>   # keep in contracts/.env, do not commit
+- ETHERSCAN_API_KEY: <your_etherscan_api_key>
 - SEPOLIA_RPC_URL: https://ethereum-sepolia-rpc.publicnode.com
 
 2) 部署 + 验证
