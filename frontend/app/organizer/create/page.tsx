@@ -82,10 +82,10 @@ export default function CreateEventPage() {
             <h3 className="text-3xl font-bold">活动创建成功！</h3>
             <p className="text-white/70">Event ID: #{eventId}</p>
             <div className="flex gap-4 justify-center">
-              <Link href={`/event/${eventId}`} className="btn-gradient">
+              <Link href={`/event?id=${eventId}`} className="btn-gradient">
                 📋 查看活动详情
               </Link>
-              <Link href={`/organizer/qr/${eventId}`} className="btn-primary">
+              <Link href={`/organizer/qr?id=${eventId}`} className="btn-primary">
                 📱 生成签到二维码
               </Link>
             </div>

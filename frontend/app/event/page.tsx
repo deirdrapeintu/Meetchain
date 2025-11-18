@@ -1,6 +1,7 @@
 "use client";
 
-import { useParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { useMetaMaskEthersSigner } from "@/src/hooks/metamask/useMetaMaskEthersSigner";
 import { useFhevm } from "@/src/fhevm/useFhevm";
 import { useEffect, useState } from "react";
@@ -10,9 +11,10 @@ import { buildIpfsGatewayUrl } from "@/src/utils/ipfs";
 import { FhevmDecryptionSignature } from "@/src/fhevm/FhevmDecryptionSignature";
 import { GenericStringInMemoryStorage } from "@/src/fhevm/GenericStringStorage";
 
-export default function EventDetailPage() {
-  const params = useParams<{ id: string }>();
-  const eventId = Number(params.id);
+function EventDetailPageInner() {
+  const sp = useSearchParams();
+  const idParam = sp.get("id") || "0";
+  const eventId = Number(idParam);
   const { provider, chainId, ethersSigner, ethersReadonlyProvider, initialMockChains, isConnected } = useMetaMaskEthersSigner();
   const { instance } = useFhevm({ provider: provider!, chainId, enabled: true, initialMockChains });
   const em = useEventManager({ instance, chainId, ethersSigner, ethersReadonlyProvider });
@@ -24,7 +26,7 @@ export default function EventDetailPage() {
   const [hasDecryptAuth, setHasDecryptAuth] = useState(false);
 
   useEffect(() => { 
-    em.loadEvent(eventId); 
+    if (Number.isFinite(eventId) && eventId > 0) em.loadEvent(eventId); 
     const t = setInterval(()=>setNow(Math.floor(Date.now()/1000)), 1000); 
     return ()=>clearInterval(t); 
   }, [em.loadEvent, eventId]);
@@ -44,7 +46,6 @@ export default function EventDetailPage() {
 
         {em.event ? (
           <div className="space-y-6">
-            {/* Event Info Card */}
             <div className="card space-y-4">
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -62,7 +63,6 @@ export default function EventDetailPage() {
                     className="btn-primary"
                     onClick={async () => {
                       if (metaOpen) { setMetaOpen(false); return; }
-                      // 授权签名校验（不解密计数，只做详情查看门槛）
                       if (!hasDecryptAuth) {
                         try {
                           if (!instance || !ethersSigner || !em.contractAddress) throw new Error("no instance/signer");
@@ -83,10 +83,12 @@ export default function EventDetailPage() {
                       }
 
                       setMetaOpen(true);
-                      if (meta) return; // 已加载
+                      if (meta) return;
                       try {
                         setMetaLoading(true); setMetaError(undefined);
-                        const url = buildIpfsGatewayUrl(em.event.metadataCID);
+                        const current = em.event;
+                        if (!current) throw new Error("event not loaded");
+                        const url = buildIpfsGatewayUrl(current.metadataCID);
                         const res = await fetch(url);
                         if (!res.ok) throw new Error(`IPFS ${res.status}`);
                         const j = await res.json();
@@ -109,6 +111,7 @@ export default function EventDetailPage() {
                   )}
                 </div>
               </div>
+
               {metaOpen && (
                 <div className="mt-4 p-4 rounded-xl bg-white/5 border border-white/10">
                   {metaLoading ? (
@@ -133,7 +136,6 @@ export default function EventDetailPage() {
               )}
             </div>
 
-            {/* Status Card */}
             <div className="grid md:grid-cols-2 gap-6">
               <div className="card">
                 <h3 className="text-xl font-bold mb-4">🔐 加密统计</h3>
@@ -171,14 +173,12 @@ export default function EventDetailPage() {
               </div>
             </div>
 
-            {/* Message */}
             {em.message && (
               <div className={`card ${em.message.includes('成功') ? 'bg-green-500/10 border-green-400/30' : em.message.includes('失败') ? 'bg-red-500/10 border-red-400/30' : 'bg-blue-500/10 border-blue-400/30'}`}>
                 <p className="font-medium">{em.message}</p>
               </div>
             )}
 
-            {/* Tips */}
             <div className="card bg-blue-500/10 border-blue-400/20">
               <h4 className="font-bold mb-2">💡 提示</h4>
               <ul className="text-sm text-white/70 space-y-1 list-disc list-inside">
@@ -192,14 +192,19 @@ export default function EventDetailPage() {
           <div className="card text-center py-12">
             <div className="text-4xl mb-4">⏳</div>
             <p className="text-white/60">{em.message || "加载活动信息中..."}</p>
-            {em.message && (
-              <div className="mt-4">
-                <a href="/organizer" className="btn-primary">← 返回后台</a>
-              </div>
-            )}
           </div>
         )}
       </main>
     </div>
   );
 }
+
+export default function EventDetailPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen"><Navbar /><main className="mx-auto max-w-4xl px-6 py-12"><div className="card text-center">Loading...</div></main></div>}>
+      <EventDetailPageInner />
+    </Suspense>
+  );
+}
+
+

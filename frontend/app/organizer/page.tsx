@@ -44,13 +44,13 @@ export default function OrganizerPage() {
               
               <div className="grid grid-cols-2 gap-3">
                 <Link 
-                  href={id ? `/event/${id}` : "#"} 
+                  href={id ? `/event?id=${id}` : "#"} 
                   className={`btn-gradient text-center ${!id && 'opacity-50 pointer-events-none'}`}
                 >
                   📋 活动详情
                 </Link>
                 <Link 
-                  href={id ? `/organizer/qr/${id}` : "#"} 
+                  href={id ? `/organizer/qr?id=${id}` : "#"} 
                   className={`btn-primary text-center ${!id && 'opacity-50 pointer-events-none'}`}
                 >
                   📱 签到二维码

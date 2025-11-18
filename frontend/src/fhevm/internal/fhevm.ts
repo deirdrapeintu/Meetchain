@@ -4,7 +4,15 @@ import { isFhevmWindowType, RelayerSDKLoader } from "./RelayerSDKLoader";
 import { publicKeyStorageGet, publicKeyStorageSet } from "./PublicKeyStorage";
 import { FhevmInstance, FhevmInstanceConfig } from "../fhevmTypes";
 
-export class FhevmReactError extends Error { code: string; constructor(code: string, message?: string, options?: ErrorOptions) { super(message, options); this.code = code; this.name = "FhevmReactError"; } }
+export class FhevmReactError extends Error { 
+  code: string; 
+  constructor(code: string, message?: string, options?: { cause?: unknown }) { 
+    super(message as any); 
+    this.code = code; 
+    this.name = "FhevmReactError"; 
+    if (options && "cause" in options) { (this as any).cause = (options as any).cause; }
+  } 
+}
 function throwFhevmError(code: string, message?: string, cause?: unknown): never { throw new FhevmReactError(code, message, cause ? { cause } : undefined); }
 
 const isFhevmInitialized = (): boolean => { if (!isFhevmWindowType(window, console.log)) return false; return (window as unknown as FhevmWindowType).relayerSDK.__initialized__ === true; };
@@ -60,7 +68,7 @@ async function resolve(providerOrUrl: Eip1193Provider | string, mockChains?: Rec
   const chainId = await getChainId(providerOrUrl);
   let rpcUrl = typeof providerOrUrl === "string" ? providerOrUrl : undefined;
   const _mockChains: Record<number, string> = { 31337: "http://localhost:8545", ...(mockChains ?? {}) };
-  if (Object.hasOwn(_mockChains, chainId)) {
+  if (Object.prototype.hasOwnProperty.call(_mockChains, chainId)) {
     if (!rpcUrl) rpcUrl = _mockChains[chainId];
     return { isMock: true, chainId, rpcUrl };
   }

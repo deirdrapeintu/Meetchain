@@ -60,7 +60,7 @@ function Section({ title, items, emptyHint }: { title: string; items: any[]; emp
 
 function EventCard({ e }: { e: any }) {
   return (
-    <Link href={`/event/${e.id}`} className="card group">
+    <Link href={`/event?id=${e.id}`} className="card group">
       <div className="flex items-center justify-between mb-2">
         <h4 className="text-xl font-bold truncate max-w-[70%]">{e.title || `Event #${e.id}`}</h4>
         <span className="text-white/60 text-sm">#{e.id}</span>
